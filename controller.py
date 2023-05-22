@@ -45,22 +45,3 @@ class Round:
         return res
 
 
-class View:
-    def display_tournament_results(self, players):
-        players.sort(key=lambda x: x.points, reverse=True)
-        print("Tournament results :")
-        for i, player in enumerate(players):
-            print(f"{i+1}. {player.name} : {player.points} points")
-
-    def display_tournament(self, rounds):
-        res = f"Tournament with {len(rounds)} rounds : \n"
-        for round in rounds:
-            res += f"{round}\n"
-        print(res)
-
-    def add_player(self):
-        name = input("Player name: ")
-        return name
-
-    def add_round(self):
-        return int(input("Round number: "))

@@ -11,6 +11,13 @@ class View:
             res += f"{round}\n"
         print(res)
 
+    def add_player(self):
+        name = input("Player name: ")
+        return name
+
+    def add_round(self):
+        return int(input("Round number: "))
+
 class TournamentView:
     def display_tournament(self, tournament):
         print(f"{tournament.name} ({tournament.start_date} - {tournament.end_date}) at {tournament.location}")
