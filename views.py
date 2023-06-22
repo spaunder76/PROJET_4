@@ -5,7 +5,7 @@ class View:
         for i, player in enumerate(players):
             print(f"{i+1}. {player.name} : {player.points} points")
     
-    def display_tournament(self, rounds):
+    def display_tournament_rounds(self, rounds):
         res = f"Tournament with {len(rounds)} rounds: \n"
         for round in rounds:
             res += f"{round}\n"
@@ -19,7 +19,7 @@ class View:
         return int(input("Round number: "))
 
 class TournamentView:
-    def display_tournament(self, tournament):
+    def display_tournament(self,tournament):
         print(f"{tournament.name} ({tournament.start_date} - {tournament.end_date}) at {tournament.location}")
         print(f"{len(tournament.players)} registered players")
         print(f"Current round: {tournament.current_round}/{tournament.num_rounds}")

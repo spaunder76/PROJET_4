@@ -1,6 +1,7 @@
 from models import Tournament
 from views import TournamentView
 from controller import TournamentController
+
 def display_menu():
     print("1. Create a tournament")
     print("2. Display tournament information")
@@ -11,15 +12,6 @@ def display_menu():
 
 def display_tournament_info(tournament):
     print(tournament)
-    #tournamentView = TournamentView()
-    #tournamentView.display_tournament(tournament)
-    '''print("Tournament information:")
-    print("Name:", tournament["name"])
-    print("Location:", tournament["location"])
-    print("Start date:", tournament["start_date"])
-    print("End date:", tournament["end_date"])
-    print("Number of rounds:", tournament["num_rounds"])
-    print("Current round:", tournament["current_round"])'''
 
 def display_round_info(round):
     print("Round information:")
@@ -38,16 +30,6 @@ def modify_general_remarks(tournament):
     tournament["general_remarks"] = remarks
     print("General remarks modified successfully.")
 
-tournament = Tournament(
-    "Chess Tournament",
-    "Chess Center",
-    "2023-06-01",
-    "2023-06-30",
-    [],
-    ["Stéphane""Loic","Mikael","Arthur","Antoine","Daniel"],
-    4,
-    2,
-    "")
 
 tournament_controller = TournamentController()
 

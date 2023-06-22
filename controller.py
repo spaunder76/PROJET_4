@@ -1,4 +1,6 @@
 from models import Tournament
+import re
+import datetime
 
 class Controller:
     def __init__(self, num_rounds,View):
@@ -52,18 +54,73 @@ class TournamentController:
 
     def create_tournament(self):
         name = input("Enter the tournament name: ")
-        location = input("Enter the tournament location: ")
-        start_date = input("Enter the tournament start date: ")
-        end_date = input("Enter the tournament end date: ")
-        num_rounds = int(input("Enter the number of rounds: "))
-        current_round = int(input("Enter the current round: "))
-        general_remarks = input("Enter the general remarks from the tournament director: ")
 
+        valid_location = False
+        while not valid_location:
+            location = input("Enter the tournament location: ")
+            if re.match(r'^[a-zA-Z\s]+$', location):
+                valid_location = True
+            else:
+                print("Invalid location. Please enter only letters.")
+
+        print("Tournament location:", location)
+
+        while True:
+            start_date_str = input("Enter the tournament start date (YYYY-MM-DD): ")
+            try:
+                start_date = datetime.datetime.strptime(start_date_str, "%Y-%m-%d").date()
+                break
+            except ValueError:
+                print("Invalid date format. Please enter the date in the format YYYY-MM-DD.")
+
+        print("Tournament start date:", start_date)
+
+        while True:
+            end_date_str = input("Enter the tournament end date (YYYY-MM-DD): ")
+            try:
+                end_date = datetime.datetime.strptime(end_date_str, "%Y-%m-%d").date()
+                break
+            except ValueError:
+                print("Invalid date format. Please enter the date in the format YYYY-MM-DD.")
+
+        print("Tournament end date:", end_date)
+
+        num_rounds = None
+        current_round = None
+
+        while True:
+            try:
+                num_rounds = int(input("Enter the number of rounds: "))
+                current_round = int(input("Enter the current round: "))
+                break
+            except ValueError:
+                print("Invalid input. Please enter only numbers.")
+
+        print("Number of rounds:", num_rounds)
+        print("Current round:", current_round)
+
+        general_remarks = input("Enter the general remarks from the tournament director: ")
         registered_players = []
-        num_players = int(input("Enter the number of registered players: "))
+
+        while True:
+            try:
+                num_players = int(input("Enter the number of registered players: "))
+                break
+            except ValueError:
+                print("Invalid input. Please enter only numbers.")
+
+        print("Number of registered players:", num_players)  
+         
+        registered_players = []
         for i in range(num_players):
-            player = input("Enter player {} name: ".format(i + 1))
-            registered_players.append(player)
+            while True:
+                player = input("Enter player {} name: ".format(i + 1))
+                if re.match(r'^[a-zA-Z]+$', player):
+                    registered_players.append(player)
+                    break
+                else:
+                    print("Le nom du joueur ne doit contenir que des lettres. Veuillez réessayer.")
+
 
         rounds = []
         for i in range(num_rounds):
