@@ -41,9 +41,6 @@ class Tournament:
         self.players = players if players else []
         self.remarks = remarks if remarks else ""
 
-    def add_player(self, player):
-        self.players.append(player)
-
     def add_round(self, round):
         self.rounds.append(round)
 
@@ -58,3 +55,23 @@ class Tournament:
                 str = str.append("\n{match}")
         return str
 
+
+class Round:
+    def __init__(self, round_number, players):
+        self.round_number = round_number
+        self.matches = []
+        self.players = players
+
+    def add_match(self, match):
+        self.matches.append(match)
+
+    def play_round(self):
+        for match in self.matches:
+            result = int(input(f"Score of {match.player1} ({match.player2}) : "))
+            match.play_match(result)
+
+    def __str__(self):
+        res = f"Round {self.round_number} : \n"
+        for match in self.matches:
+            res += f"{match}\n"
+        return res

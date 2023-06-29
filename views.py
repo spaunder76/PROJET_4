@@ -17,6 +17,7 @@ class View:
 
     def add_round(self):
         return int(input("Round number: "))
+    
 
 class TournamentView:
     def display_tournament(self,tournament):
@@ -40,3 +41,23 @@ class TournamentView:
     def add_round(self):
         return int(input("Round number: "))
     
+    def display_tournament_info(tournament):
+        print(tournament)
+
+    def display_round_info(round):
+        print("Round information:")
+        print("Round number:", round["number"])
+        print("Match list:")
+        for match in round["matches"]:
+            print(" -", match[0], "vs", match[1])
+
+    def display_registered_players(players):
+        print("List of registered players:")
+        for player in players:
+            print("-", player)
+
+    def modify_general_remarks(tournament):
+        remarks = input("Enter the general remarks from the tournament director: ")
+        tournament["general_remarks"] = remarks
+        print("General remarks modified successfully.")
+        

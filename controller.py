@@ -1,6 +1,7 @@
 from models import Tournament
 import re
 import datetime
+from models import Round
 
 class Controller:
     def __init__(self, num_rounds,View):
@@ -9,7 +10,10 @@ class Controller:
         self.players = []
         self.view = View()
 
-    def add_player(self, name):
+    def __init__(self):
+        self.players = []
+
+    def add_Player(self, name):
         player = player(name)
         self.players.append(player)
 
@@ -26,27 +30,15 @@ class Controller:
 
     def display_tournament(self):
         self.view.display_tournament(self.rounds)
+    
+    def display_menu():
+        print("1. Create a tournament")
+        print("2. Display tournament information")
+        print("3. Display information for a specific round")
+        print("4. Display registered players' information")
+        print("5. Modify general remarks from the tournament director")
+        print("6. Quit")
 
-
-class Round:
-    def __init__(self, round_number, players):
-        self.round_number = round_number
-        self.matches = []
-        self.players = players
-
-    def add_match(self, match):
-        self.matches.append(match)
-
-    def play_round(self):
-        for match in self.matches:
-            result = int(input(f"Score of {match.player1} ({match.player2}) : "))
-            match.play_match(result)
-
-    def __str__(self):
-        res = f"Round {self.round_number} : \n"
-        for match in self.matches:
-            res += f"{match}\n"
-        return res
 
 class TournamentController:
     def __init__(self):
@@ -54,37 +46,36 @@ class TournamentController:
 
     def create_tournament(self):
         name = input("Enter the tournament name: ")
+        location = self.get_tournament_location()
+        start_date = self.get_tournament_date("start")
+        end_date = self.get_tournament_date("end")
+        num_rounds, current_round = self.get_round_info()
+        general_remarks = input("Enter the general remarks from the tournament director: ")
+        registered_players = self.get_registered_players()
+        rounds = self.get_rounds_info(num_rounds)
 
-        valid_location = False
-        while not valid_location:
+        self.tournament = Tournament(name, location, start_date, end_date, rounds, registered_players,
+                                     num_rounds, current_round, general_remarks)
+        print("Tournament created successfully.")
+
+    def get_tournament_location(self):
+        while True:
             location = input("Enter the tournament location: ")
             if re.match(r'^[a-zA-Z\s]+$', location):
-                valid_location = True
+                return location
             else:
                 print("Invalid location. Please enter only letters.")
 
-        print("Tournament location:", location)
-
+    def get_tournament_date(self, date_type):
         while True:
-            start_date_str = input("Enter the tournament start date (YYYY-MM-DD): ")
+            date_str = input("Enter the tournament {} date (YYYY-MM-DD): ".format(date_type))
             try:
-                start_date = datetime.datetime.strptime(start_date_str, "%Y-%m-%d").date()
-                break
+                date = datetime.datetime.strptime(date_str, "%Y-%m-%d").date()
+                return date
             except ValueError:
                 print("Invalid date format. Please enter the date in the format YYYY-MM-DD.")
 
-        print("Tournament start date:", start_date)
-
-        while True:
-            end_date_str = input("Enter the tournament end date (YYYY-MM-DD): ")
-            try:
-                end_date = datetime.datetime.strptime(end_date_str, "%Y-%m-%d").date()
-                break
-            except ValueError:
-                print("Invalid date format. Please enter the date in the format YYYY-MM-DD.")
-
-        print("Tournament end date:", end_date)
-
+    def get_round_info(self):
         num_rounds = None
         current_round = None
 
@@ -92,26 +83,14 @@ class TournamentController:
             try:
                 num_rounds = int(input("Enter the number of rounds: "))
                 current_round = int(input("Enter the current round: "))
-                break
+                return num_rounds, current_round
             except ValueError:
                 print("Invalid input. Please enter only numbers.")
 
-        print("Number of rounds:", num_rounds)
-        print("Current round:", current_round)
-
-        general_remarks = input("Enter the general remarks from the tournament director: ")
+    def get_registered_players(self):
+        num_players = self.get_number_input("Enter the number of registered players: ")
         registered_players = []
 
-        while True:
-            try:
-                num_players = int(input("Enter the number of registered players: "))
-                break
-            except ValueError:
-                print("Invalid input. Please enter only numbers.")
-
-        print("Number of registered players:", num_players)  
-         
-        registered_players = []
         for i in range(num_players):
             while True:
                 player = input("Enter player {} name: ".format(i + 1))
@@ -119,14 +98,25 @@ class TournamentController:
                     registered_players.append(player)
                     break
                 else:
-                    print("Le nom du joueur ne doit contenir que des lettres. Veuillez réessayer.")
+                    print("Player name should contain only letters. Please try again.")
 
+        return registered_players
 
+    def get_number_input(self, message):
+        while True:
+            try:
+                num = int(input(message))
+                return num
+            except ValueError:
+                print("Invalid input. Please enter only numbers.")
+
+    def get_rounds_info(self, num_rounds):
         rounds = []
+
         for i in range(num_rounds):
             round_number = i + 1
             matches = []
-            num_matches = int(input("Enter the number of matches for round {}: ".format(round_number)))
+            num_matches = self.get_number_input("Enter the number of matches for round {}: ".format(round_number))
             for j in range(num_matches):
                 player1 = input("Enter player 1 for match {}: ".format(j + 1))
                 player2 = input("Enter player 2 for match {}: ".format(j + 1))
@@ -137,9 +127,8 @@ class TournamentController:
             }
             rounds.append(round_info)
 
-        self.tournament = Tournament(name, location, start_date, end_date, rounds, registered_players,
-                                     num_rounds, current_round, general_remarks)
-        print("Tournament created successfully.")
+        return rounds
+
     def display_tournament_info(self):
         if self.tournament:
             print("Tournament information:")
@@ -182,3 +171,6 @@ class TournamentController:
             print("General remarks modified successfully.")
         else:
             print("No tournament created yet.")
+
+
+            
