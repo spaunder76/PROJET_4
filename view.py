@@ -86,7 +86,7 @@ class View:
     def display_tournament_registered_players(self):
         if self.tournament:
             print("List of registered players:")
-            for player in self.tournament.registered_players:
+            for player in self.tournament.players:
                 print("-", player)
         else:
             print("No tournament created yet.")
@@ -125,7 +125,7 @@ class View:
 
     ### SET ###
     def set_menu_choice():
-        return input("Choose an option (1-6): ")
+        return input("Choose an option (0-5): ")
     
     def set_tournament_name():
         return input("Enter the tournament name: ")
