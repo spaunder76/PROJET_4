@@ -21,9 +21,10 @@ while True:
         controller.display_registered_players()
     elif choice == "5":
         controller.modify_general_remarks()
+    elif choice == "6":
+        controller.calculate_scores()
     else:
         controller.display_menu_invalid_choice()
-
 
 
 

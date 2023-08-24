@@ -3,7 +3,8 @@ import re
 import datetime
 from models import Round
 import json
-
+import random
+import os
 
 class Controller:
     def __init__(self, View, num_rounds = 1):
@@ -93,6 +94,50 @@ class Controller:
         print("Tournament saved to", filename)
 
 
+    def load_rounds(self):
+        for round_number in range(1, self.num_rounds + 1):
+            filename = f"round{round_number}.json"  
+            try:
+                with open(filename, "r") as file:
+                    round_data = json.load(file)
+                    matches = []
+
+                    for match_data in round_data:
+                        player1_name = match_data["player1"]
+                        player2_name = match_data["player2"]
+                        player1 = self.find_player_by_name(player1_name)
+                        player2 = self.find_player_by_name(player2_name)
+                        result = match_data["result"]
+                        match = Match(player1, player2)
+                        match.result = result
+                        matches.append(match)
+
+                    round_obj = Round(round_number, self.players)
+                    round_obj.matches = matches
+                    self.rounds.append(round_obj)
+
+                print(f"Round {round_number} loaded from", filename)
+            except FileNotFoundError:
+                print(f"No previously saved data found for Round {round_number}.")
+
+    def save_round(self, round_obj):
+        filename = f"round{round_obj.round_number}.json"  
+
+        round_data = []
+        for match in round_obj.matches:
+            data = {
+                "player1": match.player1.name,
+                "player2": match.player2.name,
+                "result": match.result
+            }
+            round_data.append(data)
+
+        with open(filename, "w") as file:
+            json.dump(round_data, file)
+
+        print(f"Round {round_obj.round_number} saved to", filename)
+
+
     ### DISPLAY ###
     def display_menu(self):
         self.view.display_menu()
@@ -155,6 +200,43 @@ class Controller:
     def modify_general_remarks(self):
         self.view.modify_tournament_general_remarks(self)
 
+
+    def calculate_scores(self):
+        player_scores = {}  # Dictionary to store player names and their total points
+        all_players = set() 
+
+        round_files = [file for file in os.listdir() if file.startswith("round") and file.endswith(".json")]
+
+        for round_file in round_files:
+            with open(round_file, "r") as file:
+                round_data = json.load(file)
+                matches = round_data["matches"]
+
+                for match in matches:
+                    player1, player2 = match
+                    all_players.add(player1)
+                    all_players.add(player2)
+
+                    outcome = random.random()
+
+                    if outcome < 0.33:  # Player 1 wins
+                        winner, loser = player1, player2
+                    elif outcome < 0.66:  # Draw
+                        winner, loser = None, None
+                    else:  # Player 2 wins
+                        winner, loser = player2, player1
+
+                    if winner is not None:
+                        player_scores.setdefault(winner, 0)
+                        player_scores[winner] += 1 
+                    if loser is not None:
+                        player_scores.setdefault(loser, 0)
+                        player_scores[loser] += 0.5  
+
+        print("Player scores:")
+        for player in all_players:
+            score = player_scores.get(player, 0)
+            print(f"{player}: {score} points")
 
 
 

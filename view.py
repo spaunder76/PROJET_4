@@ -1,5 +1,6 @@
 import re
 import datetime
+import json
 
 class View:
     ### DISPLAY ###
@@ -11,6 +12,7 @@ class View:
         print("3. Display information for a specific round")
         print("4. Display registered players' information")
         print("5. Modify general remarks from the tournament director")
+        print("6. Calculate the scores of the players")
     
     def display_menu_invalid_choice():
         print("Invalid choice. Please try again.")
@@ -67,19 +69,26 @@ class View:
             print("Current round:", self.tournament.current_round)
         else:
             print("No tournament created yet.")
+    
+
 
     def display_tournament_round_info(self):
         if self.tournament:
             round_number = int(input("Enter the round number: "))
-            if 1 <= round_number <= self.tournament.num_rounds:
-                round = self.tournament.rounds[round_number - 1]
-                print("Round information:")
-                print("Round number:", round["number"])
-                print("Match list:")
-                for match in round["matches"]:
-                    print(" -", match[0], "vs", match[1])
-            else:
-                print("Invalid round number.")
+            filename = f"round{round_number}.json"
+
+            try:
+                with open(filename, "r") as file:
+                    round_data = json.load(file)
+                    matches = round_data["matches"]
+
+                    print("Round information:")
+                    print("Round number:", round_number)
+                    print("Match list:")
+                    for match in matches:
+                        print(" -", f"{match[0]} vs {match[1]}")
+            except FileNotFoundError:
+                print(f"No round{round_number}.json file found.")
         else:
             print("No tournament created yet.")
 
@@ -125,7 +134,7 @@ class View:
 
     ### SET ###
     def set_menu_choice():
-        return input("Choose an option (0-5): ")
+        return input("Choose an option (0-6): ")
     
     def set_tournament_name():
         return input("Enter the tournament name: ")
@@ -180,6 +189,7 @@ class View:
     def set_tournament_rounds_info(self, num_rounds):
         rounds = []
         for i in range(num_rounds):
+            filename = "round"+str(i+1)+".json"
             round_number = i + 1
             matches = []
             num_matches = self.view.set_number_input("Enter the number of matches for round {}: ".format(round_number))
@@ -192,6 +202,8 @@ class View:
                 "matches": matches
             }
             rounds.append(round_info)
+            with open(filename, "w") as file:
+                json.dump(round_info, file)
         return rounds
 
     ### MODIFY ###
