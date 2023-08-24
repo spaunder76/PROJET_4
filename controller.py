@@ -108,7 +108,7 @@ class Controller:
                         player1 = self.find_player_by_name(player1_name)
                         player2 = self.find_player_by_name(player2_name)
                         result = match_data["result"]
-                        match = Match(player1, player2)
+                        match = match(player1, player2)
                         match.result = result
                         matches.append(match)
 
