@@ -108,7 +108,7 @@ class Controller:
                         player1 = self.find_player_by_name(player1_name)
                         player2 = self.find_player_by_name(player2_name)
                         result = match_data["result"]
-                        match = match(player1, player2)
+                        match = Match(player1, player2)
                         match.result = result
                         matches.append(match)
 
@@ -202,7 +202,7 @@ class Controller:
 
 
     def calculate_scores(self):
-        player_scores = {}  # Dictionary to store player names and their total points
+        player_scores = {}  
         all_players = set() 
 
         round_files = [file for file in os.listdir() if file.startswith("round") and file.endswith(".json")]
@@ -217,26 +217,36 @@ class Controller:
                     all_players.add(player1)
                     all_players.add(player2)
 
-                    outcome = random.random()
+                    outcome = input(f"Who wins between {player1} and {player2}? (1 for {player1}, 2 for {player2}, 3 for draw): ")
 
-                    if outcome < 0.33:  # Player 1 wins
+                    if outcome == "1":  # Player 1 wins
                         winner, loser = player1, player2
-                    elif outcome < 0.66:  # Draw
-                        winner, loser = None, None
-                    else:  # Player 2 wins
+                    elif outcome == "2":  # Player 2 wins
                         winner, loser = player2, player1
+                    else:  # Draw
+                        winner, loser = None, None
 
                     if winner is not None:
                         player_scores.setdefault(winner, 0)
                         player_scores[winner] += 1 
                     if loser is not None:
                         player_scores.setdefault(loser, 0)
-                        player_scores[loser] += 0.5  
+
+                    if outcome == "3":
+                        player_scores.setdefault(player1, 0)
+                        player_scores[player1] += 0.5
+                        player_scores.setdefault(player2, 0)
+                        player_scores[player2] += 0.5
+
+        for player in all_players:
+            player_scores.setdefault(player, 0)
+
+        sorted_player_scores = sorted(player_scores.items(), key=lambda item: item[1], reverse=True)
 
         print("Player scores:")
-        for player in all_players:
-            score = player_scores.get(player, 0)
+        for player, score in sorted_player_scores:
             print(f"{player}: {score} points")
+
 
 
 
